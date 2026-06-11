@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Ajouter un menu{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-6">Ajouter un plat</h2>
+        <form method="post" enctype="multipart/form-data">   <!-- ← enctype obligatoire -->
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Type de repas</label>
+                <select name="type" class="w-full border rounded p-2" required>
+                    <option value="dejeuner">Déjeuner (11h30 – 14h)</option>
+                    <option value="dessert_dejeuner">Dessert Déjeuner</option>
+                    <option value="diner">Dîner (18h – 20h)</option>
+                    <option value="dessert_diner">Dessert Dîner</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Titre du plat</label>
+                <input type="text" name="titre" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Description</label>
+                <textarea name="description" rows="3" class="w-full border rounded p-2" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Prix (FCFA)</label>
+                <input type="number" name="prix" value="200" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Image du plat</label>
+                <input type="file" name="image" accept="image/*" class="w-full border rounded p-2">  <!-- ← champ file -->
+                <p class="text-xs text-gray-500 mt-1">Formats acceptés : JPG, PNG, GIF</p>
+            </div>
+            <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="actif" checked> Actif
+                </label>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Ordre d’affichage</label>
+                <input type="number" name="ordre" value="0" class="w-full border rounded p-2">
+            </div>
+            <button type="submit" class="bg-orange-500 text-white py-2 px-4 rounded">Ajouter</button>
+            <a href="{% url 'gestion_menus' %}" class="ml-2 text-gray-600">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Accès refusé{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-12 text-center">
+    <h1 class="text-3xl font-bold text-red-600">Accès refusé</h1>
+    <p class="mt-4 text-gray-600">Vous n'avez pas les droits nécessaires pour accéder à cette page.</p>
+    <a href="{% url 'accueil' %}" class="mt-6 inline-block bg-orange-500 text-white px-6 py-2 rounded">Retour à l'accueil</a>
+</div>
+{% endblock %}

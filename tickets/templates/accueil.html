@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accueil - CROU A2{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 space-y-8">
+    
+    <!-- Section Menus du jour -->
+    <div class="bg-orange-50 rounded-xl p-6 border border-orange-200">
+        <h2 class="text-2xl font-bold text-center mb-6">🍽️ Menus du jour</h2>
+
+        <!-- Déjeuner -->
+        <div class="mb-8">
+            <h3 class="text-xl font-semibold text-center text-orange-700 mb-4">
+                🕛 Déjeuner (11h30 – 14h)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {% for menu in menus_dejeuner %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    {% if menu.image %}
+                        <img src="{{ menu.image.url }}" class="h-40 w-full object-cover" alt="{{ menu.titre }}">
+                    {% else %}
+                        <img src="https://placehold.co/400x300?text=Image+non+disponible" class="h-40 w-full object-cover">
+                    {% endif %}
+                    <div class="p-4">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 class="font-bold text-lg">{{ menu.titre }}</h4>
+                            {% if menu.statut == 'pret' %}
+                                <span class="shrink-0 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                            {% elif menu.statut == 'en_cours' %}
+                                <span class="shrink-0 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                            {% elif menu.statut == 'termine' %}
+                                <span class="shrink-0 bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                            {% else %}
+                                <span class="shrink-0 bg-gray-100 text-gray-400 text-xs font-bold px-2 py-1 rounded-full">⏸ Attente</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-gray-600">{{ menu.description }}</p>
+                        <span class="inline-block mt-2 bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">{{ menu.prix }} FCFA</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="col-span-3 text-center text-gray-500">Aucun menu pour le déjeuner.</p>
+                {% endfor %}
+                {% for menu in menus_dessert_dejeuner %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    {% if menu.image %}
+                        <img src="{{ menu.image.url }}" class="h-40 w-full object-cover" alt="{{ menu.titre }}">
+                    {% else %}
+                        <img src="https://placehold.co/400x300?text=Image+non+disponible" class="h-40 w-full object-cover">
+                    {% endif %}
+                    <div class="p-4">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 class="font-bold text-lg">{{ menu.titre }}</h4>
+                            {% if menu.statut == 'pret' %}
+                                <span class="shrink-0 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                            {% elif menu.statut == 'en_cours' %}
+                                <span class="shrink-0 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                            {% elif menu.statut == 'termine' %}
+                                <span class="shrink-0 bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                            {% else %}
+                                <span class="shrink-0 bg-gray-100 text-gray-400 text-xs font-bold px-2 py-1 rounded-full">⏸ Attente</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-gray-600">{{ menu.description }}</p>
+                        <span class="inline-block mt-2 bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">🍎 Dessert inclus</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Dîner -->
+        <div>
+            <h3 class="text-xl font-semibold text-center text-orange-700 mb-4">
+                🕡 Dîner (18h – 20h)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {% for menu in menus_diner %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    {% if menu.image %}
+                        <img src="{{ menu.image.url }}" class="h-40 w-full object-cover" alt="{{ menu.titre }}">
+                    {% else %}
+                        <img src="https://placehold.co/400x300?text=Image+non+disponible" class="h-40 w-full object-cover">
+                    {% endif %}
+                    <div class="p-4">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 class="font-bold text-lg">{{ menu.titre }}</h4>
+                            {% if menu.statut == 'pret' %}
+                                <span class="shrink-0 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                            {% elif menu.statut == 'en_cours' %}
+                                <span class="shrink-0 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                            {% elif menu.statut == 'termine' %}
+                                <span class="shrink-0 bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                            {% else %}
+                                <span class="shrink-0 bg-gray-100 text-gray-400 text-xs font-bold px-2 py-1 rounded-full">⏸ Attente</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-gray-600">{{ menu.description }}</p>
+                        <span class="inline-block mt-2 bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">{{ menu.prix }} FCFA</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="col-span-3 text-center text-gray-500">Aucun menu pour le dîner.</p>
+                {% endfor %}
+                {% for menu in menus_dessert_diner %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                    {% if menu.image %}
+                        <img src="{{ menu.image.url }}" class="h-40 w-full object-cover" alt="{{ menu.titre }}">
+                    {% else %}
+                        <img src="https://placehold.co/400x300?text=Image+non+disponible" class="h-40 w-full object-cover">
+                    {% endif %}
+                    <div class="p-4">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 class="font-bold text-lg">{{ menu.titre }}</h4>
+                            {% if menu.statut == 'pret' %}
+                                <span class="shrink-0 bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                            {% elif menu.statut == 'en_cours' %}
+                                <span class="shrink-0 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                            {% elif menu.statut == 'termine' %}
+                                <span class="shrink-0 bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                            {% else %}
+                                <span class="shrink-0 bg-gray-100 text-gray-400 text-xs font-bold px-2 py-1 rounded-full">⏸ Attente</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-gray-600">{{ menu.description }}</p>
+                        <span class="inline-block mt-2 bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">🍎 Dessert inclus</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Section À propos élargie -->
+    <div class="bg-white rounded-xl p-8 shadow-md border border-slate-200">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📌 À propos de la plateforme CROU A2</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <i class="fas fa-ticket-alt text-orange-500 text-4xl mb-3"></i>
+                <h4 class="font-bold text-xl">Achat de tickets</h4>
+                <p class="text-gray-600 mt-2">Rechargez votre portefeuille virtuel et achetez vos tickets repas en quelques clics, 24h/24.</p>
+            </div>
+            <div class="text-center">
+                <i class="fas fa-qrcode text-orange-500 text-4xl mb-3"></i>
+                <h4 class="font-bold text-xl">QR Code d’accès</h4>
+                <p class="text-gray-600 mt-2">Chaque ticket génère un code QR unique qui vous permet d’accéder rapidement au réfectoire.</p>
+            </div>
+            <div class="text-center">
+                <i class="fas fa-chart-line text-orange-500 text-4xl mb-3"></i>
+                <h4 class="font-bold text-xl">Suivi des dépenses</h4>
+                <p class="text-gray-600 mt-2">Consultez votre historique d’achats et de consommations pour mieux gérer votre budget.</p>
+            </div>
+        </div>
+        <div class="mt-8 text-center border-t pt-6 text-gray-500 text-sm">
+            <i class="fas fa-university mr-2"></i> Université Nangui Abrogoua – Service de la restauration universitaire
+        </div>
+    </div>
+</div>
+{% endblock %}

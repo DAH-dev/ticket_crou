@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Modifier un menu{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-6">Modifier le plat</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Type de repas</label>
+                <select name="type" class="w-full border rounded p-2" required>
+                    <option value="dejeuner" {% if menu.type == 'dejeuner' %}selected{% endif %}>Déjeuner (11h30 – 14h)</option>
+                    <option value="dessert_dejeuner" {% if menu.type == 'dessert_dejeuner' %}selected{% endif %}>Dessert Déjeuner</option>
+                    <option value="diner" {% if menu.type == 'diner' %}selected{% endif %}>Dîner (18h – 20h)</option>
+                    <option value="dessert_diner" {% if menu.type == 'dessert_diner' %}selected{% endif %}>Dessert Dîner</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Titre du plat</label>
+                <input type="text" name="titre" value="{{ menu.titre }}" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Description</label>
+                <textarea name="description" rows="3" class="w-full border rounded p-2" required>{{ menu.description }}</textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Prix (FCFA)</label>
+                <input type="number" name="prix" value="{{ menu.prix }}" class="w-full border rounded p-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Image du plat</label>
+                {% if menu.image %}
+                    <img src="{{ menu.image.url }}" class="h-24 rounded mb-2">
+                    <p class="text-xs text-gray-500 mb-1">Laissez vide pour conserver l'image actuelle.</p>
+                {% endif %}
+                <input type="file" name="image" accept="image/*" class="w-full border rounded p-2">
+            </div>
+            <div class="mb-4">
+                <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" name="actif" {% if menu.actif %}checked{% endif %}> Actif
+                </label>
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-1">Ordre d'affichage</label>
+                <input type="number" name="ordre" value="{{ menu.ordre }}" class="w-full border rounded p-2">
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="bg-orange-500 text-white py-2 px-4 rounded">Enregistrer</button>
+                <a href="{% url 'gestion_menus' %}" class="text-gray-600 py-2 px-4 border rounded">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

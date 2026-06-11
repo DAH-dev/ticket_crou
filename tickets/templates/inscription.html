@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Inscription - CROU A2{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-md border p-6">
+        <h2 class="text-2xl font-bold text-center mb-6">Inscription étudiant</h2>
+        <form method="post" action="{% url 'inscription' %}">{% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium mb-1">CNI *</label><input type="text" name="numero_cni" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">N° Carte Étudiant *</label><input type="text" name="numero_ce" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Nom *</label><input type="text" name="nom" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Prénom *</label><input type="text" name="prenom" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Sexe *</label><select name="sexe" required class="w-full border rounded-lg p-2"><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+                <div><label class="block text-sm font-medium mb-1">Date de naissance</label><input type="date" name="date_naissance" class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Niveau *</label><select name="niveau" required class="w-full border rounded-lg p-2"><option value="Licence 1">Licence 1</option><option value="Licence 2">Licence 2</option><option value="Licence 3">Licence 3</option><option value="Master 1">Master 1</option><option value="Master 2">Master 2</option><option value="Doctorat">Doctorat</option></select></div>
+                <div><label class="block text-sm font-medium mb-1">Filière / UFR *</label><input type="text" name="filiere" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Téléphone</label><input type="tel" name="telephone" class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Email *</label><input type="email" name="email" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Mot de passe *</label><input type="password" name="password" required class="w-full border rounded-lg p-2"></div>
+                <div><label class="block text-sm font-medium mb-1">Confirmation *</label><input type="password" name="confirm_password" required class="w-full border rounded-lg p-2"></div>
+            </div>
+            <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-lg font-semibold mt-6">S'inscrire</button>
+            <p class="text-xs text-gray-400 text-center mt-3">* Champs obligatoires</p>
+        </form>
+        <p class="text-center text-sm text-gray-500 mt-4">
+            Déjà inscrit ? <a href="{% url 'connexion' %}" class="text-orange-500">Se connecter</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

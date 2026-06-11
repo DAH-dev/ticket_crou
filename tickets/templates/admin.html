@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}Administration{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
+        <div class="bg-gray-800 text-white rounded-xl p-5 mb-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-xl font-bold">Console d'administration</h2>
+                <p class="text-sm">Gestion des membres et statistiques</p>
+            </div>
+            <a href="{% url 'gestion_menus' %}" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded text-sm font-bold">🍽️ Gérer les menus</a>
+        </div>
+
+        <!-- Gestion du personnel -->
+        <div class="mb-8">
+            <h3 class="font-bold text-lg mb-3">Membres du personnel</h3>
+            
+            <!-- Formulaire (ajout et modification) -->
+            <form id="personnelForm" method="post" action="{% url 'ajouter_personnel' %}" class="mb-6 p-4 border rounded-lg bg-slate-50">
+                {% csrf_token %}
+                <input type="hidden" name="personnel_id" id="personnel_id" value="">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                        <input type="text" name="nom" id="nom" required class="w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                        <input type="text" name="prenom" id="prenom" required class="w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Sexe</label>
+                        <select name="sexe" id="sexe" class="w-full border border-gray-300 rounded-md p-2">
+                            <option value="M">Masculin</option>
+                            <option value="F">Féminin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                        <input type="tel" name="telephone" id="telephone" required class="w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                        <input type="email" name="email" id="email" required class="w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                        <select name="role" id="role" class="w-full border border-gray-300 rounded-md p-2">
+                            <option value="vendeur">Caissier / Vendeur</option>
+                            <option value="controleur">Contrôleur</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                    <div id="passwordField">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                        <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded-md p-2">
+                        <p class="text-xs text-gray-500 mt-1">Laissez vide pour ne pas changer</p>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" id="submitBtn" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 w-full">➕ Ajouter</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tableau des membres -->
+            <table class="w-full border text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2 text-left">Nom</th>
+                        <th class="p-2 text-left">Email</th>
+                        <th class="p-2 text-left">Rôle</th>
+                        <th class="p-2 text-left">Statut</th>
+                        <th class="p-2 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in personnels %}
+                    <tr data-id="{{ p.id }}" data-nom="{{ p.nom }}" data-prenom="{{ p.prenom }}" data-sexe="{{ p.sexe }}" data-telephone="{{ p.telephone }}" data-email="{{ p.email }}" data-role="{{ p.role }}">
+                        <td class="p-2">{{ p.prenom }} {{ p.nom }}</td>
+                        <td class="p-2">{{ p.email }}</td>
+                        <td class="p-2">{{ p.get_role_display }}</td>
+                        <td class="p-2">{% if p.est_actif %}Actif{% else %}Inactif{% endif %}</td>
+                        <td class="p-2">
+                            <button type="button" class="edit-btn text-green-500 text-xs hover:underline" data-id="{{ p.id }}">Modifier</button>
+                            <form method="post" action="{% url 'toggle_personnel' p.id %}" style="display:inline">
+                                {% csrf_token %}<button type="submit" class="text-blue-500 text-xs">Toggle</button>
+                            </form>
+                            <form method="post" action="{% url 'supprimer_personnel' p.id %}" style="display:inline">
+                                {% csrf_token %}<button type="submit" class="text-red-500 ml-2 text-xs">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Statistiques globales -->
+        <div>
+            <h3 class="font-bold text-lg mb-4">Statistiques</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <p class="text-2xl font-black text-orange-500">{{ stats.nb_etudiants }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Étudiants inscrits</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                    <p class="text-2xl font-black text-blue-600">{{ nb_tickets_ligne }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Tickets achetés en ligne</p>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                    <p class="text-2xl font-black text-green-600">{{ montant_ligne }} FCFA</p>
+                    <p class="text-xs text-gray-500 mt-1">Montant total encaissé</p>
+                </div>
+            </div>
+
+            <!-- Passages réfectoire -->
+            <p class="text-sm text-gray-600 mb-4">🚪 Passages réfectoire validés : <strong>{{ stats.nb_passages }}</strong></p>
+
+            <!-- Par mois -->
+            <h4 class="font-bold text-base mb-3">📅 Tickets par mois</h4>
+            {% if par_mois %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-left">
+                            <th class="p-3 rounded-l font-bold text-gray-600">Mois</th>
+                            <th class="p-3 font-bold text-gray-600 text-right">Nombre de tickets</th>
+                            <th class="p-3 rounded-r font-bold text-gray-600 text-right">Montant (FCFA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in par_mois %}
+                        <tr class="border-b hover:bg-orange-50">
+                            <td class="p-3 font-semibold">{{ m.mois|date:"F Y" }}</td>
+                            <td class="p-3 text-right">{{ m.nb }}</td>
+                            <td class="p-3 text-right font-bold text-green-700">{{ m.montant }} FCFA</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-400 py-4">Aucun achat enregistré.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gestion du remplissage du formulaire pour modification
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const form = document.getElementById('personnelForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const personnelIdInput = document.getElementById('personnel_id');
+    const passwordField = document.getElementById('password');
+    const nomInput = document.getElementById('nom');
+    const prenomInput = document.getElementById('prenom');
+    const sexeSelect = document.getElementById('sexe');
+    const telephoneInput = document.getElementById('telephone');
+    const emailInput = document.getElementById('email');
+    const roleSelect = document.getElementById('role');
+
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const id = row.dataset.id;
+            const nom = row.dataset.nom;
+            const prenom = row.dataset.prenom;
+            const sexe = row.dataset.sexe;
+            const telephone = row.dataset.telephone;
+            const email = row.dataset.email;
+            const role = row.dataset.role;
+
+            // Remplir le formulaire
+            personnelIdInput.value = id;
+            nomInput.value = nom;
+            prenomInput.value = prenom;
+            sexeSelect.value = sexe;
+            telephoneInput.value = telephone;
+            emailInput.value = email;
+            roleSelect.value = role;
+            passwordField.value = ''; // vider le champ mot de passe
+            passwordField.required = false; // pas obligatoire en modification
+
+            // Changer l'action du formulaire et le texte du bouton
+            form.action = "{% url 'modifier_personnel' 0 %}".replace('0', id);
+            submitBtn.innerHTML = "✏️ Enregistrer les modifications";
+            submitBtn.classList.remove('bg-orange-500');
+            submitBtn.classList.add('bg-green-600');
+            // Optionnel : faire défiler vers le formulaire
+            form.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Réinitialiser le formulaire pour un ajout normal (si besoin, on peut ajouter un bouton "Nouveau")
+    // Pour éviter de rester en mode modification, on peut ajouter un bouton "Annuler modification"
+    // Mais ici, si l'utilisateur recharge la page, ça revient à l'ajout.
+    // On pourrait aussi détecter si le formulaire est soumis avec un ID vide pour ajout.
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Espace Contrôleur{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
+        <div class="bg-gray-800 text-white rounded-xl p-5 mb-6"><h2 class="text-xl font-bold">Borne de contrôle</h2><p class="text-sm">Validez les QR codes ou débitez manuellement</p></div>
+        <div class="grid lg:grid-cols-2 gap-8">
+            <div class="border rounded-xl p-5">
+                <h3 class="font-bold text-lg mb-4">Valider un QR Code</h3>
+
+                <!-- Scanner caméra -->
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500 mb-2">📷 Scanner avec la caméra :</p>
+                    <div id="qr-reader" class="rounded-lg overflow-hidden border"></div>
+                    <button id="btn-scanner" onclick="demarrerScanner()" class="mt-2 w-full bg-gray-700 text-white py-2 rounded text-sm">Activer la caméra</button>
+                    <button id="btn-stop" onclick="arreterScanner()" class="mt-1 w-full bg-red-500 text-white py-2 rounded text-sm hidden">Arrêter la caméra</button>
+                </div>
+
+                <!-- Saisie manuelle -->
+                <p class="text-sm text-gray-500 mb-2">⌨️ Ou saisir le token manuellement :</p>
+                <form method="post" action="{% url 'valider_qr' %}" id="valider-form">
+                    {% csrf_token %}
+                    <input type="text" name="token" id="token-input" placeholder="Token du QR" class="w-full border rounded p-2 mb-3" required>
+                    <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded font-bold">✅ Valider l'accès</button>
+                </form>
+            </div>
+            <div class="border rounded-xl p-5">
+                <h3 class="font-bold text-lg mb-4">Débit manuel</h3>
+                <form method="post" action="{% url 'debit_manuel' %}">{% csrf_token %}<div class="mb-3"><label class="block text-sm font-bold">Étudiant</label><select name="etudiant_id" class="w-full border rounded p-2">{% for e in etudiants %}<option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }} ({{ e.numero_ce }}) — {{ e.tickets_repas }} ticket(s)</option>{% endfor %}</select></div><button type="submit" class="w-full bg-gray-800 text-white py-2 rounded">Débiter 1 ticket</button></form>
+            </div>
+        </div>
+        <div class="mt-8 grid lg:grid-cols-2 gap-8">
+            <div class="border rounded-xl p-5"><h3 class="font-bold">Accès au réfectoire (aujourd'hui)</h3><p class="text-3xl font-black text-orange-500 mt-1">{{ stats.total }}</p><p class="text-xs text-gray-500">repas servis aujourd'hui</p></div>
+            <div class="border rounded-xl p-5"><h3 class="font-bold">Derniers passages</h3><ul class="text-sm">{% for d in depenses|slice:":10" %}<li>{{ d.date|date:"d/m H:i" }} - {{ d.etudiant.prenom }} {{ d.etudiant.nom }} : {{ d.get_type_ticket_display }}</li>{% empty %}<li>Aucun passage</li>{% endfor %}</ul></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+let html5QrCode = null;
+
+function demarrerScanner() {
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+            document.getElementById('token-input').value = decodedText;
+            arreterScanner();
+            document.getElementById('valider-form').submit();
+        },
+        () => {}
+    ).then(() => {
+        document.getElementById('btn-scanner').classList.add('hidden');
+        document.getElementById('btn-stop').classList.remove('hidden');
+    });
+}
+
+function arreterScanner() {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            document.getElementById('btn-scanner').classList.remove('hidden');
+            document.getElementById('btn-stop').classList.add('hidden');
+        });
+    }
+}
+</script>
+{% endblock %}

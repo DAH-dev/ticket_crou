@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CROU A2{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        nav a.active { background-color: #f97316; color: white; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-100 flex flex-col min-h-screen">
+    <nav class="bg-[#0f172a] text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-4">
+                <div class="bg-[#f97316] text-white font-bold p-2 rounded-lg text-center text-sm">CA2</div>
+                <span class="font-bold text-lg hidden sm:inline">CROU A2</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'accueil' %}" class="px-3 py-1 rounded text-sm hover:bg-slate-700 transition {% if request.resolver_match.url_name == 'accueil' %}active{% endif %}">
+                    <i class="fas fa-home mr-1"></i> Accueil
+                </a>
+                
+
+                {% if user.is_authenticated %}
+    <div class="flex items-center space-x-3">
+        {% if user.etudiant %}
+            <a href="{% url 'portail_etudiant' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">
+                <i class="fas fa-user-graduate mr-1"></i> Mon espace étudiant
+            </a>
+        {% elif user.personnel %}
+            {% if user.personnel.role == 'vendeur' %}
+                <a href="{% url 'portail_caissier' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">
+                    <i class="fas fa-cash-register mr-1"></i> Mon espace caissier
+                </a>
+            {% elif user.personnel.role == 'controleur' %}
+                <a href="{% url 'portail_controleur' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">
+                    <i class="fas fa-user-shield mr-1"></i> Mon espace contrôleur
+                </a>
+            {% elif user.personnel.role == 'admin' %}
+                <a href="{% url 'portail_admin' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">
+                    <i class="fas fa-user-lock mr-1"></i> Administration
+                </a>
+                <a href="{% url 'gestion_menus' %}" class="px-3 py-1 rounded text-sm hover:bg-slate-700">
+                    <i class="fas fa-utensils mr-1"></i> Menus
+                </a>
+            {% endif %}
+        {% else %}
+            <!-- Cas superuser sans relation -->
+            <a href="{% url 'portail_admin' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">
+                <i class="fas fa-user-lock mr-1"></i> Administration
+            </a>
+        {% endif %}
+        <a href="{% url 'deconnexion' %}" class="px-3 py-1 rounded text-sm hover:bg-slate-700">
+            <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion ({{ user.username }})
+        </a>
+    </div>
+        {% else %}
+    <div class="flex gap-2">
+        <a href="{% url 'connexion' %}" class="px-3 py-1 rounded text-sm hover:bg-slate-700">Connexion</a>
+        <a href="{% url 'inscription' %}" class="px-3 py-1 rounded text-sm bg-orange-500 hover:bg-orange-600">Inscription</a>
+    </div>
+         {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main class="flex-grow py-6">
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 mb-4">
+                {% for message in messages %}
+                    <div class="bg-{% if message.tags == 'success' %}green-100 text-green-800{% elif message.tags == 'error' %}red-100 text-red-800{% else %}blue-100 text-blue-800{% endif %} p-3 rounded mb-2">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-[#0f172a] text-slate-400 text-center py-5 text-xs mt-8">
+        <p class="font-semibold text-slate-300">&copy; 2026 CROU Abidjan-2 – Université Nangui Abrogoua</p>
+        <p class="mt-1 text-slate-500">Plateforme de billetterie numérique – Tous droits réservés.</p>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

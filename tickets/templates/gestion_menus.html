@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des Menus{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">🍽️ Gestion des Menus</h2>
+            <a href="{% url 'ajouter_menu' %}" class="bg-orange-500 text-white px-4 py-2 rounded">➕ Nouveau menu</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full border text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2">Type</th>
+                        <th class="p-2">Titre</th>
+                        <th class="p-2">Description</th>
+                        <th class="p-2">Prix (FCFA)</th>
+                        <th class="p-2">Actif</th>
+                        <th class="p-2">Ordre</th>
+                        <th class="p-2">Statut</th>
+                        <th class="p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for menu in menus %}
+                    <tr class="border-b">
+                        <td class="p-2">{{ menu.get_type_display }}</td>
+                        <td class="p-2">{{ menu.titre }}</td>
+                        <td class="p-2">{{ menu.description|truncatechars:50 }}</td>
+                        <td class="p-2">{{ menu.prix }}</td>
+                        <td class="p-2">{% if menu.actif %}✅{% else %}❌{% endif %}</td>
+                        <td class="p-2">{{ menu.ordre }}</td>
+                        <td class="p-2">
+                            <form method="post" action="{% url 'update_statut_menu' menu.id %}" style="display:inline">
+                                {% csrf_token %}
+                                <select name="statut" onchange="this.form.submit()" class="border rounded text-xs p-1">
+                                    <option value="en_attente" {% if menu.statut == 'en_attente' %}selected{% endif %}>⏸ En attente</option>
+                                    <option value="en_cours" {% if menu.statut == 'en_cours' %}selected{% endif %}>⏳ En cours</option>
+                                    <option value="pret" {% if menu.statut == 'pret' %}selected{% endif %}>✅ Prêt</option>
+                                    <option value="termine" {% if menu.statut == 'termine' %}selected{% endif %}>🔴 Terminé</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="p-2">
+                            <a href="{% url 'modifier_menu' menu.id %}" class="text-blue-500">✏️</a>
+                            <a href="{% url 'supprimer_menu' menu.id %}" class="text-red-500 ml-2">🗑️</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

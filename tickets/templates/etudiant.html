@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block title %}Espace Étudiant{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 space-y-6">
+
+    <!-- Bandeau compte -->
+    <div class="bg-orange-500 rounded-xl p-5 text-white flex flex-wrap justify-between items-center gap-4">
+        <div>
+            <h2 class="text-xl font-bold">Bonjour {{ etudiant.prenom }} 👋</h2>
+            <p class="text-sm opacity-90">Tarif : 200 FCFA / ticket</p>
+        </div>
+        <div class="flex gap-4">
+            <div class="bg-white/20 px-4 py-2 rounded text-center">
+                <p class="text-xs opacity-80">Solde</p>
+                <p class="text-xl font-black">{{ etudiant.wallet }} FCFA</p>
+            </div>
+            <div class="bg-white/20 px-4 py-2 rounded text-center">
+                <p class="text-xs opacity-80">Tickets</p>
+                <p class="text-xl font-black">{{ mes_tickets.count }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Colonne principale -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Statut des repas du jour -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold text-lg mb-3">📢 Statut des repas du jour</h3>
+                <div class="grid md:grid-cols-2 gap-3">
+                    {% for menu in menus_dejeuner %}
+                    <div class="flex items-center justify-between border rounded-lg p-3">
+                        <span class="font-medium text-sm">🕛 {{ menu.titre }}</span>
+                        {% if menu.statut == 'pret' %}
+                            <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                        {% elif menu.statut == 'en_cours' %}
+                            <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                        {% elif menu.statut == 'termine' %}
+                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                        {% else %}
+                            <span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-full">⏸ En attente</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% for menu in menus_diner %}
+                    <div class="flex items-center justify-between border rounded-lg p-3">
+                        <span class="font-medium text-sm">🕡 {{ menu.titre }}</span>
+                        {% if menu.statut == 'pret' %}
+                            <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✅ Prêt</span>
+                        {% elif menu.statut == 'en_cours' %}
+                            <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded-full">⏳ En cours</span>
+                        {% elif menu.statut == 'termine' %}
+                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">🔴 Terminé</span>
+                        {% else %}
+                            <span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-full">⏸ En attente</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if not menus_dejeuner and not menus_diner %}
+                    <p class="col-span-2 text-center text-gray-400 py-2">Aucun menu disponible aujourd'hui.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Menus du jour -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold text-lg mb-3">🍽️ Menus du jour</h3>
+
+                {% if menus_dejeuner or menus_dessert_dejeuner %}
+                <p class="text-sm font-semibold text-orange-600 mb-2">🕛 Déjeuner (11h30 – 14h)</p>
+                <div class="grid md:grid-cols-3 gap-3 mb-4">
+                    {% for menu in menus_dejeuner %}
+                    <div class="border rounded-xl overflow-hidden">
+                        {% if menu.image %}<img src="{{ menu.image.url }}" class="h-24 w-full object-cover" alt="{{ menu.titre }}">
+                        {% else %}<div class="h-24 w-full bg-orange-100 flex items-center justify-center text-3xl">🍽️</div>{% endif %}
+                        <div class="p-2"><p class="font-bold text-xs">{{ menu.titre }}</p><p class="text-xs text-gray-500">{{ menu.description }}</p></div>
+                    </div>
+                    {% endfor %}
+                    {% for menu in menus_dessert_dejeuner %}
+                    <div class="border rounded-xl overflow-hidden">
+                        {% if menu.image %}<img src="{{ menu.image.url }}" class="h-24 w-full object-cover" alt="{{ menu.titre }}">
+                        {% else %}<div class="h-24 w-full bg-green-100 flex items-center justify-center text-3xl">🍎</div>{% endif %}
+                        <div class="p-2"><p class="font-bold text-xs">{{ menu.titre }}</p><span class="text-xs text-green-600 font-bold">Dessert inclus</span></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if menus_diner or menus_dessert_diner %}
+                <p class="text-sm font-semibold text-orange-600 mb-2">🕡 Dîner (18h – 20h)</p>
+                <div class="grid md:grid-cols-3 gap-3">
+                    {% for menu in menus_diner %}
+                    <div class="border rounded-xl overflow-hidden">
+                        {% if menu.image %}<img src="{{ menu.image.url }}" class="h-24 w-full object-cover" alt="{{ menu.titre }}">
+                        {% else %}<div class="h-24 w-full bg-orange-100 flex items-center justify-center text-3xl">🍽️</div>{% endif %}
+                        <div class="p-2"><p class="font-bold text-xs">{{ menu.titre }}</p><p class="text-xs text-gray-500">{{ menu.description }}</p></div>
+                    </div>
+                    {% endfor %}
+                    {% for menu in menus_dessert_diner %}
+                    <div class="border rounded-xl overflow-hidden">
+                        {% if menu.image %}<img src="{{ menu.image.url }}" class="h-24 w-full object-cover" alt="{{ menu.titre }}">
+                        {% else %}<div class="h-24 w-full bg-green-100 flex items-center justify-center text-3xl">🍎</div>{% endif %}
+                        <div class="p-2"><p class="font-bold text-xs">{{ menu.titre }}</p><span class="text-xs text-green-600 font-bold">Dessert inclus</span></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Mes tickets / QR codes -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold text-lg mb-3">🎟️ Mes tickets disponibles</h3>
+                {% if mes_tickets %}
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {% for ticket in mes_tickets %}
+                    <div class="border rounded-xl p-3 text-center bg-slate-50">
+                        {% if ticket.est_transfere %}
+                        <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full mb-1">
+                            🔄 Reçu de {{ ticket.transfere_depuis.prenom }}
+                        </span>
+                        {% endif %}
+                        <img src="{% url 'image_qr' ticket.token %}" alt="QR" class="mx-auto w-36 h-36 rounded">
+                        <p class="text-xs text-gray-500 mt-2">Ticket #{{ forloop.counter }}</p>
+                        <p class="text-xs text-orange-600 font-semibold mb-2">Expire {{ ticket.expire_at|date:"d/m/Y" }}</p>
+
+                        <!-- Actions -->
+                        <div class="flex gap-1 mt-1">
+                            <a href="{% url 'partager_ticket' ticket.token %}"
+                               class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs font-bold py-1 rounded text-center">
+                                📤 Partager
+                            </a>
+                        </div>
+
+                        <!-- Transfert -->
+                        <details class="text-left mt-1">
+                            <summary class="text-xs text-blue-600 cursor-pointer font-semibold text-center">↗️ Transférer</summary>
+                            <form method="post" action="{% url 'transferer_ticket' ticket.token %}" class="mt-2">
+                                {% csrf_token %}
+                                <input type="text" name="numero_ce" placeholder="N° carte étudiant"
+                                       class="w-full border rounded p-1 text-xs mb-1 focus:outline-none focus:ring-1 focus:ring-blue-300">
+                                <button type="submit" class="w-full bg-blue-600 text-white text-xs py-1 rounded font-bold">
+                                    Confirmer le transfert
+                                </button>
+                            </form>
+                        </details>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-8 text-gray-400">
+                    <p class="text-4xl mb-2">🎟️</p>
+                    <p class="text-sm">Aucun ticket disponible.</p>
+                    <p class="text-xs mt-1">Achetez des tickets ci-contre pour obtenir vos QR codes.</p>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Colonne latérale -->
+        <div class="space-y-6">
+
+            <!-- Acheter tickets -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold mb-3">🛒 Acheter des tickets</h3>
+                <p class="text-sm text-gray-500 mb-3">Chaque ticket = 1 repas = 1 QR code généré automatiquement</p>
+                <form method="post" action="{% url 'acheter_ticket' %}">
+                    {% csrf_token %}
+                    <label class="block text-sm text-gray-600 mb-1">Nombre de tickets</label>
+                    <input type="number" name="quantite" min="1" max="50" value="1"
+                           class="w-full border border-gray-300 rounded p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <p class="text-xs text-gray-400 mb-2">Solde actuel : <strong>{{ etudiant.wallet }} FCFA</strong></p>
+                    <button type="submit" class="bg-orange-500 text-white w-full py-2 rounded font-bold">Acheter</button>
+                </form>
+            </div>
+
+            <!-- Recharger wallet -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold mb-3">💳 Recharger le wallet</h3>
+                <form method="post" action="{% url 'recharger' %}">
+                    {% csrf_token %}
+                    <label class="block text-sm text-gray-600 mb-1">Montant (FCFA)</label>
+                    <input type="number" name="montant" min="200" step="200" placeholder="Ex : 1000"
+                           class="w-full border border-gray-300 rounded p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <button type="submit" class="bg-gray-800 text-white w-full py-2 rounded font-bold">Recharger</button>
+                </form>
+            </div>
+
+            <!-- Historique -->
+            <div class="bg-white border rounded-xl p-4">
+                <h3 class="font-bold mb-3">📋 Historique des achats</h3>
+                <ul class="text-sm space-y-1">
+                    {% for a in achats|slice:":5" %}
+                    <li class="text-gray-600 border-b pb-1">{{ a.date|date:"d/m H:i" }} — {{ a.quantite }} ticket(s) — {{ a.prix_total }} FCFA</li>
+                    {% empty %}
+                    <li class="text-gray-400">Aucun achat.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

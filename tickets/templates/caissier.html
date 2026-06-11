@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block title %}Espace Caissier{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 space-y-6">
+
+    <!-- Header -->
+    <div class="bg-gray-800 text-white rounded-xl p-5 flex justify-between items-center">
+        <div>
+            <h2 class="text-xl font-bold">Espace Caissier</h2>
+            <p class="text-sm opacity-80">{{ personnel.prenom }} {{ personnel.nom }}</p>
+        </div>
+    </div>
+
+    <!-- Statistiques globales -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div class="bg-white border rounded-xl p-5 text-center shadow-sm">
+            <p class="text-3xl font-black text-orange-500">{{ nb_tickets_ligne }}</p>
+            <p class="text-sm text-gray-500 mt-1">Tickets achetés en ligne</p>
+        </div>
+
+        <div class="bg-white border rounded-xl p-5 text-center shadow-sm">
+            <p class="text-3xl font-black text-green-600">{{ montant_ligne }} FCFA</p>
+            <p class="text-sm text-gray-500 mt-1">Montant total encaissé</p>
+        </div>
+
+    </div>
+
+    <!-- Tableau par mois -->
+    <div class="bg-white border rounded-xl p-5 shadow-sm">
+        <h3 class="font-bold text-lg mb-4">📅 Tickets achetés par mois</h3>
+        {% if par_mois %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 text-left">
+                        <th class="p-3 rounded-l font-bold text-gray-600">Mois</th>
+                        <th class="p-3 font-bold text-gray-600 text-right">Nombre de tickets</th>
+                        <th class="p-3 rounded-r font-bold text-gray-600 text-right">Montant (FCFA)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in par_mois %}
+                    <tr class="border-b hover:bg-orange-50">
+                        <td class="p-3 font-semibold">{{ m.mois|date:"F Y" }}</td>
+                        <td class="p-3 text-right">{{ m.nb }}</td>
+                        <td class="p-3 text-right font-bold text-green-700">{{ m.montant }} FCFA</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-gray-400 py-4">Aucun achat enregistré.</p>
+        {% endif %}
+    </div>
+
+    <!-- Ajouter un étudiant -->
+    <div class="bg-white border rounded-xl p-5 shadow-sm">
+        <h3 class="font-bold text-lg mb-4">➕ Ajouter un étudiant</h3>
+        <form method="post" action="{% url 'ajouter_etudiant' %}">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CNI *</label>
+                    <input type="text" name="numero_cni" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">N° Carte Étudiant *</label>
+                    <input type="text" name="numero_ce" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                    <input type="text" name="nom" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                    <input type="text" name="prenom" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sexe</label>
+                    <select name="sexe" class="w-full border border-gray-300 rounded-md p-2">
+                        <option value="M">Masculin</option>
+                        <option value="F">Féminin</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de naissance</label>
+                    <input type="date" name="date_naissance" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                    <select name="niveau" class="w-full border border-gray-300 rounded-md p-2">
+                        <option value="Licence 1">Licence 1</option>
+                        <option value="Licence 2">Licence 2</option>
+                        <option value="Licence 3">Licence 3</option>
+                        <option value="Master 1">Master 1</option>
+                        <option value="Master 2">Master 2</option>
+                        <option value="Doctorat">Doctorat</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Filière / UFR *</label>
+                    <input type="text" name="filiere" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                    <input type="tel" name="telephone" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <input type="email" name="email" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                    <input type="password" name="password" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirmation *</label>
+                    <input type="password" name="confirm_password" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+            </div>
+            <button type="submit" class="mt-4 w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg font-bold transition">
+                Enregistrer l'étudiant
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

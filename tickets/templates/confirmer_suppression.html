@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Supprimer un menu{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-8 text-center">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Supprimer le menu ?</h2>
+        <p>{{ menu.titre }} ({{ menu.get_type_display }})</p>
+        <form method="post" class="mt-6">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Confirmer</button>
+            <a href="{% url 'gestion_menus' %}" class="ml-2 text-gray-600">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
